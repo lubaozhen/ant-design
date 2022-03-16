@@ -21,6 +21,7 @@ import LocaleReceiver from '../locale-provider/LocaleReceiver';
 import defaultLocale from '../locale/default';
 import { ConfigContext } from '../config-provider';
 import devWarning from '../_util/devWarning';
+import useStyle from './style';
 
 const LIST_IGNORE = `__LIST_IGNORE_${Date.now()}__`;
 
@@ -326,6 +327,8 @@ const InternalUpload: React.ForwardRefRenderFunction<unknown, UploadProps> = (pr
     delete rcUploadProps.id;
   }
 
+  const [wrapSSR, hashId] = useStyle(prefixCls);
+
   const renderUploadList = (button?: React.ReactNode, buttonVisible?: boolean) =>
     showUploadList ? (
       <LocaleReceiver componentName="Upload" defaultLocale={defaultLocale.Upload}>
@@ -341,6 +344,7 @@ const InternalUpload: React.ForwardRefRenderFunction<unknown, UploadProps> = (pr
             typeof showUploadList === 'boolean' ? ({} as ShowUploadListInterface) : showUploadList;
           return (
             <UploadList
+              className={hashId}
               listType={listType}
               items={mergedFileList}
               previewFile={previewFile}
@@ -380,8 +384,9 @@ const InternalUpload: React.ForwardRefRenderFunction<unknown, UploadProps> = (pr
         [`${prefixCls}-in-form-item`]: isFormItemInput,
       },
       className,
+      hashId,
     );
-    return (
+    return wrapSSR(
       <span>
         <div
           className={dragCls}
@@ -395,7 +400,7 @@ const InternalUpload: React.ForwardRefRenderFunction<unknown, UploadProps> = (pr
           </RcUpload>
         </div>
         {renderUploadList()}
-      </span>
+      </span>,
     );
   }
 
@@ -414,18 +419,18 @@ const InternalUpload: React.ForwardRefRenderFunction<unknown, UploadProps> = (pr
   );
 
   if (listType === 'picture-card') {
-    return (
-      <span className={classNames(`${prefixCls}-picture-card-wrapper`, className)}>
+    return wrapSSR(
+      <span className={classNames(`${prefixCls}-picture-card-wrapper`, className, hashId)}>
         {renderUploadList(renderUploadButton(), !!children)}
-      </span>
+      </span>,
     );
   }
 
-  return (
-    <span className={className}>
+  return wrapSSR(
+    <span className={classNames(className, hashId)}>
       {renderUploadButton(children ? undefined : { display: 'none' })}
       {renderUploadList()}
-    </span>
+    </span>,
   );
 };
 
