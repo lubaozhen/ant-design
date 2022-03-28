@@ -91,7 +91,7 @@ function getRadioWrapperStyle(prefixCls: string, token: RadioToken): CSSInterpol
         display: 'inline-block',
         width: 0,
         overflow: 'hidden',
-        content: '\\a0',
+        content: '"\\a0"',
       },
     },
   };
@@ -101,24 +101,8 @@ function getBaseRadioStyle(prefixCls: string, hashId: string, token: RadioToken)
   const radioInnerPrefixCls = `${prefixCls}-inner`;
 
   return {
-    [`.${prefixCls}`]: {
-      ...resetComponent(token),
-      position: 'relative',
-      top: token.radioTop,
-      display: 'inline-block',
-      outline: 'none',
-      cursor: 'pointer',
-
-      [`.${prefixCls}-wrapper:hover &,
-        &:hover .${radioInnerPrefixCls},
-        &-input:focus + .${radioInnerPrefixCls}`]: {
-        borderColor: token.radioDotColor,
-      },
-
-      [`.${prefixCls}-input:focus + .${radioInnerPrefixCls}`]: {
-        boxShadow: token.radioFocusShadow,
-      },
-
+    [`.${prefixCls}-wrapper`]: {
+      // hashId 在 wrapper 上，只能铺平
       [`.${prefixCls}-checked::after`]: {
         position: 'absolute',
         top: 0,
@@ -130,98 +114,117 @@ function getBaseRadioStyle(prefixCls: string, hashId: string, token: RadioToken)
         visibility: 'hidden',
         animation: `${antRadioEffect.getName(hashId)} 0.36s ease-in-out`,
         animationFillMode: 'both',
-        content: '',
+        content: '""',
       },
+    },
 
-      [`.${prefixCls}:hover::after, .${prefixCls}-wrapper:hover &::after`]: {
-        visibility: 'visible',
-      },
+    [`.${prefixCls}`]: {
+      ...resetComponent(token),
+      position: 'relative',
+      top: token.radioTop,
+      display: 'inline-block',
+      outline: 'none',
+      cursor: 'pointer',
+    },
 
-      [`.${prefixCls}-inner`]: {
-        '&::after': {
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          display: 'block',
-          width: token.radioSize,
-          height: token.radioSize,
-          marginTop: `-(${token.radioSize} / 2)`,
-          marginLeft: `-(${token.radioSize} / 2)`,
-          backgroundColor: token.radioDotColor,
-          borderTop: 0,
-          borderLeft: 0,
-          borderRadius: token.radioSize,
-          transform: 'scale(0)',
-          opacity: 0,
-          transition: `all ${token.radioDuration} ${token.motionEaseInOutCirc}`,
-          content: ' ',
-        },
+    [`.${prefixCls}-wrapper:hover &,
+      &:hover .${radioInnerPrefixCls},
+      &-input:focus + .${radioInnerPrefixCls}`]: {
+      borderColor: token.radioDotColor,
+    },
 
-        position: 'relative',
-        top: 0,
-        left: 0,
+    [`.${prefixCls}-input:focus + .${radioInnerPrefixCls}`]: {
+      boxShadow: token.radioFocusShadow,
+    },
+
+    [`.${prefixCls}:hover::after, .${prefixCls}-wrapper:hover &::after`]: {
+      visibility: 'visible',
+    },
+
+    [`.${prefixCls}-inner`]: {
+      '&::after': {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
         display: 'block',
         width: token.radioSize,
         height: token.radioSize,
-        backgroundColor: token.radioButtonBg,
-        borderColor: token.colorBorder,
-        borderStyle: 'solid',
-        borderWidth: token.radioBorderWidth,
-        borderRadius: '50%',
-        transition: `all ${token.radioDuration}`,
-      },
-
-      [`.${prefixCls}-input`]: {
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        zIndex: 1,
-        cursor: 'pointer',
+        marginTop: `-(${token.radioSize} / 2)`,
+        marginLeft: `-(${token.radioSize} / 2)`,
+        backgroundColor: token.radioDotColor,
+        borderTop: 0,
+        borderLeft: 0,
+        borderRadius: token.radioSize,
+        transform: 'scale(0)',
         opacity: 0,
+        transition: `all ${token.radioDuration} ${token.motionEaseInOutCirc}`,
+        content: ' ',
       },
 
-      // 选中状态
-      [`.${prefixCls}-checked`]: {
-        [`.${radioInnerPrefixCls}`]: {
-          borderColor: token.radioDotColor,
+      position: 'relative',
+      top: 0,
+      left: 0,
+      display: 'block',
+      width: token.radioSize,
+      height: token.radioSize,
+      backgroundColor: token.radioButtonBg,
+      borderColor: token.colorBorder,
+      borderStyle: 'solid',
+      borderWidth: token.radioBorderWidth,
+      borderRadius: '50%',
+      transition: `all ${token.radioDuration}`,
+    },
 
-          '&::after': {
-            transform: `scale((${token.radioDotSize} / ${token.radioSize}))`,
-            opacity: 1,
-            transition: `all ${token.radioDuration} ${token.motionEaseInOutCirc}`,
-          },
+    [`.${prefixCls}-input`]: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      zIndex: 1,
+      cursor: 'pointer',
+      opacity: 0,
+    },
+
+    // 选中状态
+    [`.${prefixCls}-checked`]: {
+      [`.${radioInnerPrefixCls}`]: {
+        borderColor: token.radioDotColor,
+
+        '&::after': {
+          transform: `scale((${token.radioDotSize} / ${token.radioSize}))`,
+          opacity: 1,
+          transition: `all ${token.radioDuration} ${token.motionEaseInOutCirc}`,
         },
       },
+    },
 
-      [`.${prefixCls}-disabled`]: {
+    [`.${prefixCls}-disabled`]: {
+      cursor: 'not-allowed',
+
+      [`.${radioInnerPrefixCls}`]: {
+        backgroundColor: token.colorBgComponentDisabled,
+        borderColor: `${token.colorBorder} !important`,
         cursor: 'not-allowed',
 
-        [`.${radioInnerPrefixCls}`]: {
-          backgroundColor: token.colorBgComponentDisabled,
-          borderColor: `${token.colorBorder} !important`,
-          cursor: 'not-allowed',
-
-          '&::after': {
-            backgroundColor: token.radioDotDisabledColor,
-          },
-        },
-
-        '&-input': {
-          cursor: 'not-allowed',
-        },
-
-        [`.${prefixCls}-disabled + span`]: {
-          color: token.colorTextDisabled,
-          cursor: 'not-allowed',
+        '&::after': {
+          backgroundColor: token.radioDotDisabledColor,
         },
       },
 
-      [`span.${prefixCls} + *`]: {
-        paddingRight: token.paddingSM,
-        paddingLeft: token.paddingSM,
+      '&-input': {
+        cursor: 'not-allowed',
       },
+
+      [`.${prefixCls}-disabled + span`]: {
+        color: token.colorTextDisabled,
+        cursor: 'not-allowed',
+      },
+    },
+
+    [`span.${prefixCls} + *`]: {
+      paddingRight: token.paddingSM,
+      paddingLeft: token.paddingSM,
     },
   };
 }

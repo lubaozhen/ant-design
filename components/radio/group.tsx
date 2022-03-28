@@ -7,10 +7,16 @@ import { ConfigContext } from '../config-provider';
 import SizeContext from '../config-provider/SizeContext';
 import { RadioGroupContextProvider } from './context';
 import getDataOrAriaProps from '../_util/getDataOrAriaProps';
+import useStyle from './style';
 
 const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>((props, ref) => {
   const { getPrefixCls, direction } = React.useContext(ConfigContext);
   const size = React.useContext(SizeContext);
+
+  const prefixCls = getPrefixCls('radio', props.prefixCls);
+
+  // Style
+  const [wrapSSR, hashId] = useStyle(prefixCls, getPrefixCls());
 
   const [value, setValue] = useMergedState(props.defaultValue, {
     value: props.value,
@@ -30,7 +36,6 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>((props, ref
 
   const renderGroup = () => {
     const {
-      prefixCls: customizePrefixCls,
       className = '',
       options,
       optionType,
@@ -43,7 +48,6 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>((props, ref
       onMouseEnter,
       onMouseLeave,
     } = props;
-    const prefixCls = getPrefixCls('radio', customizePrefixCls);
     const groupPrefixCls = `${prefixCls}-group`;
     let childrenToRender = children;
     // 如果存在 options, 优先使用
@@ -89,8 +93,9 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>((props, ref
         [`${groupPrefixCls}-rtl`]: direction === 'rtl',
       },
       className,
+      hashId,
     );
-    return (
+    return wrapSSR(
       <div
         {...getDataOrAriaProps(props)}
         className={classString}
@@ -101,7 +106,7 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>((props, ref
         ref={ref}
       >
         {childrenToRender}
-      </div>
+      </div>,
     );
   };
 
